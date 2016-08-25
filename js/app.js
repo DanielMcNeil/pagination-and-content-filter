@@ -56,4 +56,8 @@ function active(pageNumber) {
 // set initial view to the first 10 students (initial view is page 1)
 $(document).ready(function(){
   paginate('1');
+  // show student search if the user's brower supports javascript
+  var search = '<input placeholder="Search for students...">';
+  search += '<button>Search</button>';
+  $('.student-search').html(search);
 });
