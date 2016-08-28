@@ -51,15 +51,19 @@ function buildPageLinks(numberOfStudents) {
   // select page number links and add event handler
   // show all students and then call the pagination function on click or
   // show all search matches and then call the pagination function on click
+  // use a fade-in/fade-out transition
   pageLinks = $('.pagelink');
-  pageLinks.click(function(){
+  pageLinks.click(function() {
     var pageNumber = $(this).text();
-    if (search) {
-      $('li.match').removeClass('hidden');
-    } else {
-      studentItem.removeClass('hidden');
-    }
-    paginate(pageNumber);
+    $('.student-list').fadeOut(400, function(){
+      if (search) {
+        $('li.match').removeClass('hidden');
+      } else {
+        studentItem.removeClass('hidden');
+      }
+      paginate(pageNumber);
+    });
+    $('.student-list').fadeIn();
   });
 }
 
