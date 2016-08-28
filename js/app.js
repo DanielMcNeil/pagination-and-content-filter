@@ -69,7 +69,7 @@ function buildPageLinks(numberOfStudents) {
 
 // set active class on current page
 function active(pageNumber) {
-  var page = pageNumber
+  var page = pageNumber;
   pageLinks.each(function() {
     $(this).removeClass('active');
     if ($(this).text() === page) {
@@ -107,7 +107,7 @@ function studentSearch() {
     $(this).parent().removeClass('match');
     if ($('.student-item:first').hasClass('error')) {
       $('.student-item:first').detach();
-    };
+    }
     // get the name and email
     var name = ($(this).children('h3').html()).toLowerCase();
     var email = ($(this).children('span.email').html()).toLowerCase();
@@ -130,4 +130,4 @@ function studentSearch() {
   if (studentsFound === 0) {
     $('.student-list').prepend('<li class="student-item error">No Matches Found</li>');
   }
-};
+}
