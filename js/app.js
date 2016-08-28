@@ -86,8 +86,9 @@ $(document).ready(function(){
   var search = '<input placeholder="Search for students...">';
   search += '<button>Search</button>';
   $('.student-search').html(search);
-  // attach click event to the search button
+  // attach click event to the search button and keyup event for dynamic searching to the search box
   $('.student-search button').click(studentSearch);
+  $('.student-search input').keyup(studentSearch);
 });
 
 //search function
@@ -100,6 +101,8 @@ function studentSearch() {
   $('.student-details').each(function(){
     // hide the student (they will be shown if there is a match)
     $(this).parent().addClass('hidden');
+    // remove match flag in case of multiple searches (it will be added back if they are a match)
+    $(this).parent().removeClass('match');
     // get the name and email
     var name = ($(this).children('h3').html()).toLowerCase();
     var email = ($(this).children('span.email').html()).toLowerCase();
