@@ -127,3 +127,8 @@ to help users identify it as a clickable item*/
 .hidden {
   display: none;
 }
+
+.error {
+  text-align: center;
+  font-size: 1.5em;
+}

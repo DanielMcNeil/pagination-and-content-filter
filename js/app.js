@@ -99,15 +99,19 @@ function studentSearch() {
   var studentsFound = 0;
   // iteriate through each student
   $('.student-details').each(function(){
-    // hide the student (they will be shown if there is a match)
+    // search resets:
+      // hide the student (they will be shown if there is a match)
+      // remove match flag in case of multiple searches (it will be added back if they are a match)
+      // remove error message if last search had no matches
     $(this).parent().addClass('hidden');
-    // remove match flag in case of multiple searches (it will be added back if they are a match)
     $(this).parent().removeClass('match');
+    if ($('.student-item:first').hasClass('error')) {
+      $('.student-item:first').detach();
+    };
     // get the name and email
     var name = ($(this).children('h3').html()).toLowerCase();
     var email = ($(this).children('span.email').html()).toLowerCase();
-    // create a new regular expression based on input from the search box and compare it
-    // to the name and email
+    // create a new regular expression based on input from the search box and compare it to the name and email
     var re = new RegExp(query);
     var result1 = re.exec(name);
     var result2 = re.exec(email);
@@ -121,4 +125,9 @@ function studentSearch() {
   // rebuild page links and repaginate after search
   buildPageLinks(studentsFound);
   paginate('1');
+
+  // display message if there are no matches
+  if (studentsFound === 0) {
+    $('.student-list').prepend('<li class="student-item error">No Matches Found</li>');
+  }
 };
