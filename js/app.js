@@ -1,46 +1,67 @@
 "use strict()";
 
-// select the student html container, count them, use that to determine number of pages
+// select the student html containers and count them
 var studentItem = $('.student-item');
-var numberOfStudents = studentItem.length;
-var pages = Math.ceil(numberOfStudents / 10);
+var initialNumberOfStudents = studentItem.length;
+
+// sets whether pagination is the result of a search
+var search = false;
 
 // display the correct students when page numbers are clicked (or on page load)
 // also sets active class on correct page number link
+// after a search, only items that match the search will be paginated
 function paginate(pageNumber) {
   var endIndex = pageNumber * 10 - 1;
   var startIndex = endIndex - 9;
-  $('.student-item:gt(' + endIndex + ')').hide();
-  if (pageNumber > 1) {
-    $('.student-item:lt(' + startIndex + ')').hide();
+
+  if (search){
+    $('li.match:gt(' + endIndex + ')').addClass('hidden');
+    if (pageNumber > 1) {
+      $('li.match:lt(' + startIndex + ')').addClass('hidden');
+    }
+  } else {
+    $('.student-item:gt(' + endIndex + ')').addClass('hidden');
+    if (pageNumber > 1) {
+      $('.student-item:lt(' + startIndex + ')').addClass('hidden');
+    }
   }
   active(pageNumber);
 }
 
-//build the pagination navigation code block
-var pagination = $('.pagination');
-var paginationContent = '<ul>';
+var pageLinks;
+function buildPageLinks(numberOfStudents) {
+  // set number of pages
+  var pages = Math.ceil(numberOfStudents / 10);
 
-//create number of list items === number of pages
-for (var p = 1; p <= pages; ++p) {
-  paginationContent += '<li><a class="pagelink"';
-  // if (p === 1){ paginationContent += ' active';}
-  paginationContent += ' href="#">' + p + '</a></li>';
+  //build the pagination navigation code block
+  var pagination = $('.pagination');
+  var paginationContent = '<ul>';
+
+  //create number of list items === number of pages
+  for (var p = 1; p <= pages; ++p) {
+    paginationContent += '<li><a class="pagelink"';
+    // if (p === 1){ paginationContent += ' active';}
+    paginationContent += ' href="#">' + p + '</a></li>';
+  }
+
+  // finish the pagination code block and fill the .pagination div with it
+  paginationContent += '</ul>';
+  pagination.html(paginationContent);
+
+  // select page number links and add event handler
+  // show all students and then call the pagination function on click or
+  // show all search matches and then call the pagination function on click
+  pageLinks = $('.pagelink');
+  pageLinks.click(function(){
+    var pageNumber = $(this).text();
+    if (search) {
+      $('li.match').removeClass('hidden');
+    } else {
+      studentItem.removeClass('hidden');
+    }
+    paginate(pageNumber);
+  });
 }
-
-// finish the pagination code block and fill the .pagination div with it
-paginationContent += '</ul>';
-pagination.html(paginationContent);
-
-// select page number links and add event handler
-// show all students then call pagination function on click
-var pageLinks = $('.pagelink');
-
-pageLinks.click(function(){
-  var pageNumber = $(this).text();
-  studentItem.show();
-  paginate(pageNumber);
-});
 
 // set active class on current page
 function active(pageNumber) {
@@ -55,9 +76,42 @@ function active(pageNumber) {
 
 // set initial view to the first 10 students (initial view is page 1)
 $(document).ready(function(){
+  buildPageLinks(initialNumberOfStudents);
   paginate('1');
   // show student search if the user's brower supports javascript
   var search = '<input placeholder="Search for students...">';
   search += '<button>Search</button>';
   $('.student-search').html(search);
+  // attach click event to the search button
+  $('.student-search button').click(studentSearch);
 });
+
+//search function
+function studentSearch() {
+  // get the text string from the search box, set search to true, initialize a counter for matches
+  var query = ($('.student-search input').prop('value')).toLowerCase();
+  search = true;
+  var studentsFound = 0;
+  // iteriate through each student
+  $('.student-details').each(function(){
+    // hide the student (they will be shown if there is a match)
+    $(this).parent().addClass('hidden');
+    // get the name and email
+    var name = ($(this).children('h3').html()).toLowerCase();
+    var email = ($(this).children('span.email').html()).toLowerCase();
+    // create a new regular expression based on input from the search box and compare it
+    // to the name and email
+    var re = new RegExp(query);
+    var result1 = re.exec(name);
+    var result2 = re.exec(email);
+    // if there is a match, show student, make them as a match, and tick counter
+    if (result1 !== null || result2 !== null) {
+      $(this).parent().removeClass('hidden');
+      $(this).parent().addClass('match');
+      studentsFound += 1;
+    }
+  });
+  // rebuild page links and repaginate after search
+  buildPageLinks(studentsFound);
+  paginate('1');
+};

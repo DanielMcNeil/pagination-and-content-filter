@@ -117,3 +117,13 @@ body{
       background-color: #4ba6c3;
       color: #fff;
     }
+
+/*change the cursor to a pointer when hovering over the search button
+to help users identify it as a clickable item*/
+.student-search button:hover {
+  cursor: pointer;
+}
+
+.hidden {
+  display: none;
+}
